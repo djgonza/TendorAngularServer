@@ -1,0 +1,19 @@
+{
+    "name": "tendor-angular-server",
+    "version": "0.0.0",
+    "description": "",
+    "main": "app.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "start": "node app.js"
+    },
+    "author": "David jimenez Gonzalez",
+    "license": "ISC",
+    "dependencies": {
+        "body-parser": "^1.13.2",
+        "cors": "^2.8.1",
+        "express": "^4.13.0",
+        "is-online": "^7.0.0",
+        "rootpath": "^0.1.2"
+    }
+}
