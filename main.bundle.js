@@ -553,9 +553,6 @@ module.exports = "<div class=\"detallesDocumento\">\n\n  <div class=\"card panel
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_app_modules_documentos_services_documentos_service__ = __webpack_require__("../../../../../src/app/modules/documentos/services/documentos.service.ts");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_app_modules_documentos_services_registros_service__ = __webpack_require__("../../../../../src/app/modules/documentos/services/registros.service.ts");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_app_modules_documentos_models_documento_model__ = __webpack_require__("../../../../../src/app/modules/documentos/models/documento.model.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_app_modules_documentos_models_registro_model__ = __webpack_require__("../../../../../src/app/modules/documentos/models/registro.model.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6_app_modules_documentos_models_valores_model__ = __webpack_require__("../../../../../src/app/modules/documentos/models/valores.model.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7_app_modules_documentos_models_valor_model__ = __webpack_require__("../../../../../src/app/modules/documentos/models/valor.model.ts");
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return DetallesDocumentoComponent; });
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -572,9 +569,6 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 
 
 /* Models */
-
-
-
 
 var DetallesDocumentoComponent = (function () {
     function DetallesDocumentoComponent(documentosMemoriaService, documentosService, registrosService) {
@@ -601,13 +595,7 @@ var DetallesDocumentoComponent = (function () {
         this.editarRegistros = !this.editarRegistros;
     };
     DetallesDocumentoComponent.prototype.crearRegistro = function () {
-        var nuevoRegistro = new __WEBPACK_IMPORTED_MODULE_5_app_modules_documentos_models_registro_model__["a" /* Registro */](null, this.documento);
-        var nuevosValores = this.documento.campos.values.map(function (campo) {
-            return new __WEBPACK_IMPORTED_MODULE_7_app_modules_documentos_models_valor_model__["a" /* Valor */](null, campo, null);
-        });
-        nuevoRegistro.valores = new __WEBPACK_IMPORTED_MODULE_6_app_modules_documentos_models_valores_model__["a" /* Valores */]();
-        nuevoRegistro.valores.values = nuevosValores;
-        this.registrosService.crearRegistro(nuevoRegistro, this.documento);
+        this.registrosService.addRegistroVacio(this.documento);
     };
     DetallesDocumentoComponent.prototype.actualizarRegistros = function () {
         var _this = this;
@@ -836,7 +824,7 @@ var EditarCampoComponent = (function () {
         }
     };
     EditarCampoComponent.prototype.addCampoVacio = function () {
-        this.camposService.addCampoVacio(this.documento.campos);
+        this.camposService.addCampoVacio(this.documento);
     };
     EditarCampoComponent.prototype.removeCampo = function (campo) {
         /*if (confirm(`¿Seguro que desea eliminar el campo ${campo.getNombre()} ?`)) {
@@ -1732,8 +1720,9 @@ var Valores = (function () {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_app_services_httpService_service__ = __webpack_require__("../../../../../src/app/services/httpService.service.ts");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_app_services_appMemoria_service__ = __webpack_require__("../../../../../src/app/services/appMemoria.service.ts");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_app_modules_documentos_services_documentosMemoria_service__ = __webpack_require__("../../../../../src/app/modules/documentos/services/documentosMemoria.service.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_app_modules_documentos_models_campo_model__ = __webpack_require__("../../../../../src/app/modules/documentos/models/campo.model.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_app_modules_documentos_models_tipoValor_model__ = __webpack_require__("../../../../../src/app/modules/documentos/models/tipoValor.model.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_app_modules_documentos_services_documentos_service__ = __webpack_require__("../../../../../src/app/modules/documentos/services/documentos.service.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_app_modules_documentos_models_campo_model__ = __webpack_require__("../../../../../src/app/modules/documentos/models/campo.model.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6_app_modules_documentos_models_tipoValor_model__ = __webpack_require__("../../../../../src/app/modules/documentos/models/tipoValor.model.ts");
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return CamposService; });
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -1751,30 +1740,33 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 
 
 
+
 var CamposService = (function () {
-    function CamposService(http, appMemoriaService, documentosMemoriaService) {
+    function CamposService(http, appMemoriaService, documentosMemoriaService, documentosService) {
         this.http = http;
         this.appMemoriaService = appMemoriaService;
         this.documentosMemoriaService = documentosMemoriaService;
+        this.documentosService = documentosService;
     }
-    CamposService.prototype.addCampoVacio = function (campos) {
-        var nuevosCampos = campos.values;
-        var nuevoCampo = new __WEBPACK_IMPORTED_MODULE_4_app_modules_documentos_models_campo_model__["a" /* Campo */](null, "", this.documentosMemoriaService.tiposValores[0]);
+    CamposService.prototype.addCampoVacio = function (documento) {
+        var nuevosCampos = documento.campos.values;
+        var nuevoCampo = new __WEBPACK_IMPORTED_MODULE_5_app_modules_documentos_models_campo_model__["a" /* Campo */](null, "", this.documentosMemoriaService.tiposValores[0]);
         nuevosCampos.push(nuevoCampo);
-        campos.values = nuevosCampos;
+        documento.campos.values = nuevosCampos;
+        this.documentosService.actualizarDocumento(documento);
     };
     //Crear un nuevo TipoValor desde un json
     CamposService.prototype.parseObjectTipoValor = function (tipoValor) {
-        return new __WEBPACK_IMPORTED_MODULE_5_app_modules_documentos_models_tipoValor_model__["a" /* TipoValor */](tipoValor._id, tipoValor.nombre, tipoValor.tipo);
+        return new __WEBPACK_IMPORTED_MODULE_6_app_modules_documentos_models_tipoValor_model__["a" /* TipoValor */](tipoValor._id, tipoValor.nombre, tipoValor.tipo);
     };
     return CamposService;
 }());
 CamposService = __decorate([
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["c" /* Injectable */])(),
-    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1_app_services_httpService_service__["a" /* HttpService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1_app_services_httpService_service__["a" /* HttpService */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_2_app_services_appMemoria_service__["a" /* AppMemoriaService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2_app_services_appMemoria_service__["a" /* AppMemoriaService */]) === "function" && _b || Object, typeof (_c = typeof __WEBPACK_IMPORTED_MODULE_3_app_modules_documentos_services_documentosMemoria_service__["a" /* DocumentosMemoriaService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3_app_modules_documentos_services_documentosMemoria_service__["a" /* DocumentosMemoriaService */]) === "function" && _c || Object])
+    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1_app_services_httpService_service__["a" /* HttpService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1_app_services_httpService_service__["a" /* HttpService */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_2_app_services_appMemoria_service__["a" /* AppMemoriaService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2_app_services_appMemoria_service__["a" /* AppMemoriaService */]) === "function" && _b || Object, typeof (_c = typeof __WEBPACK_IMPORTED_MODULE_3_app_modules_documentos_services_documentosMemoria_service__["a" /* DocumentosMemoriaService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3_app_modules_documentos_services_documentosMemoria_service__["a" /* DocumentosMemoriaService */]) === "function" && _c || Object, typeof (_d = typeof __WEBPACK_IMPORTED_MODULE_4_app_modules_documentos_services_documentos_service__["a" /* DocumentosService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_4_app_modules_documentos_services_documentos_service__["a" /* DocumentosService */]) === "function" && _d || Object])
 ], CamposService);
 
-var _a, _b, _c;
+var _a, _b, _c, _d;
 //# sourceMappingURL=campos.service.js.map
 
 /***/ }),
@@ -1891,6 +1883,10 @@ var DocumentosService = (function () {
         var url = '/documentos/actualizarDocumento';
         return this.http.post(url, { documento: documento.toJson() }, this.appMemoriaService.httpOptions).pipe(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1_rxjs_operators_tap__["tap"])(function (nuevoDocumentoServer) {
             var nuevoDocumento = _this.parseObjectDocumento(nuevoDocumentoServer);
+            if (nuevoDocumento.id == _this.documentosMemoriaService.documentoSeleccionado.id) {
+                _this.documentosMemoriaService.documentoSeleccionado = nuevoDocumento;
+                _this.registrosService.getRegistros(nuevoDocumento);
+            }
             _this.documentosMemoriaService.updateDocumento(nuevoDocumento);
         }), __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2_rxjs_operators_catchError__["catchError"])(function (error) {
             //TODO: tener cuidado porque si actualizamos el documento seleccionado
@@ -2173,31 +2169,14 @@ var RegistrosService = (function () {
         });
     };
     //Añade un registro vacio para poder guardarlo mas tarde
-    RegistrosService.prototype.addRegistroVacio = function () {
-        /*let documento = this.documentosService.selectedDocumento.getValue();
-        let campos = new Array<Valor>();
-        documento.getCampos().map(campo => {
-            switch (campo.getTipoValor().getTipo()) {
-                case "String":
-                    campos.push(new Valor(campo, ""));
-                    break;
-                case "Number":
-                    campos.push(new Valor(campo, 0));
-                    break;
-                case "Boolean":
-                    campos.push(new Valor(campo, false));
-                    break;
-                default:
-                    break;
-            }
-            let valor = new Valor(campo, null);
+    RegistrosService.prototype.addRegistroVacio = function (documento) {
+        var nuevoRegistro = new __WEBPACK_IMPORTED_MODULE_4_app_modules_documentos_models_registro_model__["a" /* Registro */](null, documento);
+        var nuevosValores = documento.campos.values.map(function (campo) {
+            return new __WEBPACK_IMPORTED_MODULE_6_app_modules_documentos_models_valor_model__["a" /* Valor */](null, campo, null);
         });
-        let nuevoRegistro = new Registro(null, documento, null, campos);
-    
-        //Añadimos el nuevo Registro a la memoria
-        let nuevosRegistros = this.registros.getValue();
-        nuevosRegistros.push(nuevoRegistro);
-        this.registros.next(nuevosRegistros);*/
+        nuevoRegistro.valores = new __WEBPACK_IMPORTED_MODULE_5_app_modules_documentos_models_valores_model__["a" /* Valores */]();
+        nuevoRegistro.valores.values = nuevosValores;
+        this.crearRegistro(nuevoRegistro, documento);
     };
     //Actualiza los campos del registro
     RegistrosService.prototype.actualizarCamposDelRegistro = function (registro) {
@@ -2954,7 +2933,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var HttpService = (function () {
     function HttpService(http) {
         this.http = http;
-        this.serviceUrl = 'https://tendor.herokuapp.com'; //'http://localhost:3000';  // URL to web api
+        this.serviceUrl = 'http://localhost:3000'; //'https://tendor.herokuapp.com';   // URL to web api
     }
     //Peticiones get
     HttpService.prototype.get = function (url, httpOptions) {
